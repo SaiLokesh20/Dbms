@@ -1,5 +1,7 @@
-use callhub;
-INSERT INTO Department (department_name, department_building, opening_hours, closing_hours) VALUES
+USE CallHub;
+
+-- ---------------- DEPARTMENT ----------------
+INSERT INTO Department (department_name, building, opening_hours, closing_hours) VALUES
 ('Computer Science','Block A','09:00:00','17:00:00'),
 ('Information Technology','Block A','09:00:00','17:00:00'),
 ('Electrical Engineering','Block B','09:00:00','17:00:00'),
@@ -20,6 +22,8 @@ INSERT INTO Department (department_name, department_building, opening_hours, clo
 ('Security','Gate','00:00:00','23:59:00'),
 ('Medical','Medical','09:00:00','18:00:00'),
 ('Exam Cell','Admin','09:00:00','17:00:00');
+
+-- ---------------- ROLE ----------------
 INSERT INTO Role (role_name) VALUES
 ('Student'),('Professor'),('Assistant Professor'),('Associate Professor'),
 ('Lab Assistant'),('Technician'),('HOD'),('Dean'),('Director'),
@@ -27,6 +31,8 @@ INSERT INTO Role (role_name) VALUES
 ('Librarian'),('Hostel Warden'),('Security Guard'),
 ('Doctor'),('Nurse'),('IT Engineer'),
 ('Placement Officer'),('Research Scholar');
+
+-- ---------------- PERMISSION ----------------
 INSERT INTO Permission (permission_name) VALUES
 ('VIEW_CONTACT'),('EDIT_CONTACT'),('DELETE_CONTACT'),
 ('EXPORT'),('EMERGENCY'),('VIEW_ANALYTICS'),
@@ -35,7 +41,9 @@ INSERT INTO Permission (permission_name) VALUES
 ('ADD_DEPT'),('DELETE_DEPT'),('UPDATE_DEPT'),
 ('SEARCH'),('CALL'),('EMAIL'),
 ('VIEW_PROFILE'),('ADMIN_ACCESS');
-INSERT INTO Role_Permission VALUES
+
+-- ---------------- ROLE_PERMISSION ----------------
+INSERT INTO Role_Permission (role_id, permission_id) VALUES
 (1,1),(1,10),
 (2,1),(2,6),
 (3,1),(3,6),
@@ -47,6 +55,7 @@ INSERT INTO Role_Permission VALUES
 (9,1),(9,4),
 (10,1),(10,2);
 
+-- ---------------- MEMBER ----------------
 INSERT INTO Member
 (member_name,iit_email,primary_phone,dob,department_id,is_at_campus,join_date)
 VALUES
@@ -71,6 +80,7 @@ VALUES
 ('Nikhil Bansal','nikhil@org.in','9000000019','1998-09-19',19,TRUE,'2020-01-01'),
 ('Tanya Kapoor','tanya@org.in','9000000020','2001-10-20',20,TRUE,'2023-08-01');
 
+-- ---------------- MEMBER_ROLE ----------------
 INSERT INTO Member_Role (member_id,role_id,is_primary,start_date) VALUES
 (1,1,TRUE,'2022-07-01'),
 (2,2,TRUE,'2021-07-01'),
@@ -93,6 +103,7 @@ INSERT INTO Member_Role (member_id,role_id,is_primary,start_date) VALUES
 (19,19,TRUE,'2020-01-01'),
 (20,1,TRUE,'2023-08-01');
 
+-- ---------------- MEMBER_CONTACT ----------------
 INSERT INTO Member_Contact (member_id,contact_type,contact_value,is_primary) VALUES
 (1,'ALT_PHONE','8000000001',FALSE),(2,'ALT_PHONE','8000000002',FALSE),
 (3,'ALT_PHONE','8000000003',FALSE),(4,'ALT_PHONE','8000000004',FALSE),
@@ -105,166 +116,47 @@ INSERT INTO Member_Contact (member_id,contact_type,contact_value,is_primary) VAL
 (17,'ALT_PHONE','8000000017',FALSE),(18,'ALT_PHONE','8000000018',FALSE),
 (19,'ALT_PHONE','8000000019',FALSE),(20,'ALT_PHONE','8000000020',FALSE);
 
-INSERT INTO Hostel (hostel_name, caretaker_member_id, caretaker_contact) VALUES
-('Ganga Hostel',14,'7000000001'),
-('Yamuna Hostel',15,'7000000002'),
-('Krishna Hostel',16,'7000000003'),
-('Kaveri Hostel',17,'7000000004'),
-('Godavari Hostel',18,'7000000005'),
-('Narmada Hostel',19,'7000000006'),
-('Saraswati Hostel',13,'7000000007'),
-('Brahmaputra Hostel',12,'7000000008'),
-('Tapti Hostel',11,'7000000009'),
-('Mahanadi Hostel',10,'7000000010'),
-('Sabarmati Hostel',9,'7000000011'),
-('Indus Hostel',8,'7000000012'),
-('Teesta Hostel',7,'7000000013'),
-('Periyar Hostel',6,'7000000014'),
-('Hooghly Hostel',5,'7000000015'),
-('Chambal Hostel',4,'7000000016'),
-('Tungabhadra Hostel',3,'7000000017'),
-('Beas Hostel',2,'7000000018'),
-('Ravi Hostel',1,'7000000019'),
-('Satluj Hostel',20,'7000000020');
+-- ---------------- LAB ----------------
+INSERT INTO Lab (lab_name, department_id, building, room_no, contact_no, incharge_member_id) VALUES
+('AI Lab',8,'Block F','F201','7100000001',8),
+('Robotics Lab',4,'Block C','C301','7100000002',5),
+('Power Systems Lab',3,'Block B','B210','7100000003',3),
+('Civil Survey Lab',5,'Block D','D102','7100000004',4),
+('Electronics Lab',6,'Block E','E110','7100000005',6);
 
-INSERT INTO Lab (lab_name, department_id, lab_room_no, contact_no, incharge_member_id) VALUES
-('AI Lab',8,'F201','7100000001',8),
-('Robotics Lab',4,'C301','7100000002',5),
-('Power Systems Lab',3,'B210','7100000003',3),
-('Civil Survey Lab',5,'D102','7100000004',4),
-('Electronics Lab',6,'E110','7100000005',6),
-('Data Science Lab',7,'F101','7100000006',7),
-('ML Lab',8,'F202','7100000007',8),
-('Networking Lab',9,'G103','7100000008',9),
-('IT Lab',2,'A210','7100000009',2),
-('Programming Lab',1,'A101','7100000010',1),
-('CAD Lab',4,'C210','7100000011',5),
-('Thermal Lab',4,'C220','7100000012',5),
-('Microprocessor Lab',6,'E201','7100000013',6),
-('Physics Lab',3,'B110','7100000014',3),
-('Chemistry Lab',5,'D210','7100000015',4),
-('Research Lab',16,'R101','7100000016',16),
-('Security Lab',9,'G210','7100000017',9),
-('Cloud Lab',2,'A310','7100000018',2),
-('IoT Lab',8,'F303','7100000019',8),
-('VR Lab',7,'F401','7100000020',7);
+-- ---------------- OFFICE_ROOM ----------------
+INSERT INTO Office_Room (department_id, building, room_no, office_contact) VALUES
+(1,'Block A','101','7200000001'),
+(2,'Block A','102','7200000002'),
+(3,'Block B','103','7200000003'),
+(4,'Block C','104','7200000004'),
+(5,'Block D','105','7200000005');
 
-
-INSERT INTO Office_Room (department_id, building_no, office_room_no, office_contact) VALUES
-(1,'A','101','7200000001'),
-(2,'A','102','7200000002'),
-(3,'B','103','7200000003'),
-(4,'C','104','7200000004'),
-(5,'D','105','7200000005'),
-(6,'E','106','7200000006'),
-(7,'F','107','7200000007'),
-(8,'F','108','7200000008'),
-(9,'G','109','7200000009'),
-(10,'Admin','110','7200000010'),
-(11,'Admin','111','7200000011'),
-(12,'Admin','112','7200000012'),
-(13,'Library','113','7200000013'),
-(14,'Hostel','114','7200000014'),
-(15,'Placement','115','7200000015'),
-(16,'R&D','116','7200000016'),
-(17,'IT','117','7200000017'),
-(18,'Gate','118','7200000018'),
-(19,'Medical','119','7200000019'),
-(20,'Admin','120','7200000020');
-
+-- ---------------- SEARCH_LOG ----------------
 INSERT INTO Search_Log
-(searched_by_member_id, search_keyword, search_time, result_count, filter_department_id, filter_role_id)
+(member_id, search_keyword, search_time, result_count, filter_department_id, filter_role_id)
 VALUES
 (1,'Rahul','2026-01-01 10:00:00',3,1,1),
 (2,'Library','2026-01-02 11:00:00',5,13,13),
-(3,'Hostel','2026-01-03 12:00:00',2,14,14),
-(4,'AI','2026-01-04 09:00:00',6,8,2),
-(5,'Placement','2026-01-05 08:30:00',4,15,19),
-(6,'Doctor','2026-01-06 10:15:00',1,19,16),
-(7,'Security','2026-01-07 14:20:00',3,18,15),
-(8,'Admin','2026-01-08 13:00:00',7,10,10),
-(9,'Accounts','2026-01-09 15:00:00',2,11,11),
-(10,'HR','2026-01-10 16:00:00',5,12,12),
-(11,'Research','2026-01-11 11:00:00',2,16,20),
-(12,'IT','2026-01-12 12:00:00',3,17,18),
-(13,'Civil','2026-01-13 09:00:00',4,5,4),
-(14,'Mechanical','2026-01-14 10:00:00',5,4,3),
-(15,'Electrical','2026-01-15 11:00:00',6,3,2),
-(16,'Data','2026-01-16 12:00:00',3,7,1),
-(17,'Exam','2026-01-17 13:00:00',2,20,10),
-(18,'AI Lab','2026-01-18 14:00:00',4,8,5),
-(19,'Cloud','2026-01-19 15:00:00',3,2,18),
-(20,'Security','2026-01-20 16:00:00',5,18,15);
+(3,'Hostel','2026-01-03 12:00:00',2,14,14);
 
+-- ---------------- DIRECTORY_INTERACTION_LOG ----------------
 INSERT INTO Directory_Interaction_Log
 (actor_member_id,target_member_id,interaction_type,interaction_time)
 VALUES
 (1,2,'CLICK_CALL','2026-02-01 10:00:00'),
-(2,3,'VIEW_PROFILE','2026-02-01 11:00:00'),
-(3,4,'CLICK_EMAIL','2026-02-01 12:00:00'),
-(4,5,'CLICK_CALL','2026-02-02 10:00:00'),
-(5,6,'VIEW_PROFILE','2026-02-02 11:00:00'),
-(6,7,'CLICK_EMAIL','2026-02-02 12:00:00'),
-(7,8,'CLICK_CALL','2026-02-03 10:00:00'),
-(8,9,'VIEW_PROFILE','2026-02-03 11:00:00'),
-(9,10,'CLICK_EMAIL','2026-02-03 12:00:00'),
-(10,11,'CLICK_CALL','2026-02-04 10:00:00'),
-(11,12,'VIEW_PROFILE','2026-02-04 11:00:00'),
-(12,13,'CLICK_EMAIL','2026-02-04 12:00:00'),
-(13,14,'CLICK_CALL','2026-02-05 10:00:00'),
-(14,15,'VIEW_PROFILE','2026-02-05 11:00:00'),
-(15,16,'CLICK_EMAIL','2026-02-05 12:00:00'),
-(16,17,'CLICK_CALL','2026-02-06 10:00:00'),
-(17,18,'VIEW_PROFILE','2026-02-06 11:00:00'),
-(18,19,'CLICK_EMAIL','2026-02-06 12:00:00'),
-(19,20,'CLICK_CALL','2026-02-07 10:00:00'),
-(20,1,'VIEW_PROFILE','2026-02-07 11:00:00');
+(2,3,'VIEW_PROFILE','2026-02-01 11:00:00');
 
+-- ---------------- LOGIN_HISTORY ----------------
 INSERT INTO Login_History
 (member_id,login_time,logout_time,ip_address)
 VALUES
 (1,'2026-02-01 09:00:00','2026-02-01 10:00:00','192.168.1.1'),
-(2,'2026-02-01 09:05:00','2026-02-01 10:05:00','192.168.1.2'),
-(3,'2026-02-01 09:10:00','2026-02-01 10:10:00','192.168.1.3'),
-(4,'2026-02-01 09:15:00','2026-02-01 10:15:00','192.168.1.4'),
-(5,'2026-02-01 09:20:00','2026-02-01 10:20:00','192.168.1.5'),
-(6,'2026-02-01 09:25:00','2026-02-01 10:25:00','192.168.1.6'),
-(7,'2026-02-01 09:30:00','2026-02-01 10:30:00','192.168.1.7'),
-(8,'2026-02-01 09:35:00','2026-02-01 10:35:00','192.168.1.8'),
-(9,'2026-02-01 09:40:00','2026-02-01 10:40:00','192.168.1.9'),
-(10,'2026-02-01 09:45:00','2026-02-01 10:45:00','192.168.1.10'),
-(11,'2026-02-01 09:50:00','2026-02-01 10:50:00','192.168.1.11'),
-(12,'2026-02-01 09:55:00','2026-02-01 10:55:00','192.168.1.12'),
-(13,'2026-02-01 10:00:00','2026-02-01 11:00:00','192.168.1.13'),
-(14,'2026-02-01 10:05:00','2026-02-01 11:05:00','192.168.1.14'),
-(15,'2026-02-01 10:10:00','2026-02-01 11:10:00','192.168.1.15'),
-(16,'2026-02-01 10:15:00','2026-02-01 11:15:00','192.168.1.16'),
-(17,'2026-02-01 10:20:00','2026-02-01 11:20:00','192.168.1.17'),
-(18,'2026-02-01 10:25:00','2026-02-01 11:25:00','192.168.1.18'),
-(19,'2026-02-01 10:30:00','2026-02-01 11:30:00','192.168.1.19'),
-(20,'2026-02-01 10:35:00','2026-02-01 11:35:00','192.168.1.20');
+(2,'2026-02-01 09:05:00','2026-02-01 10:05:00','192.168.1.2');
 
-
+-- ---------------- AUDIT_LOG ----------------
 INSERT INTO Audit_Log
 (performed_by_member_id,target_member_id,action_type,affected_table,affected_row_pk,action_time)
 VALUES
 (9,1,'INSERT','Member','1','2026-02-01 12:00:00'),
-(9,2,'UPDATE','Member','2','2026-02-01 12:05:00'),
-(9,3,'DELETE','Member','3','2026-02-01 12:10:00'),
-(9,4,'INSERT','Department','4','2026-02-01 12:15:00'),
-(9,5,'UPDATE','Department','5','2026-02-01 12:20:00'),
-(9,6,'DELETE','Department','6','2026-02-01 12:25:00'),
-(9,7,'INSERT','Role','7','2026-02-01 12:30:00'),
-(9,8,'UPDATE','Role','8','2026-02-01 12:35:00'),
-(9,9,'DELETE','Role','9','2026-02-01 12:40:00'),
-(9,10,'EXPORT','Member','10','2026-02-01 12:45:00'),
-(9,11,'INSERT','Lab','11','2026-02-01 12:50:00'),
-(9,12,'UPDATE','Lab','12','2026-02-01 12:55:00'),
-(9,13,'DELETE','Lab','13','2026-02-01 13:00:00'),
-(9,14,'INSERT','Hostel','14','2026-02-01 13:05:00'),
-(9,15,'UPDATE','Hostel','15','2026-02-01 13:10:00'),
-(9,16,'DELETE','Hostel','16','2026-02-01 13:15:00'),
-(9,17,'INSERT','Office_Room','17','2026-02-01 13:20:00'),
-(9,18,'UPDATE','Office_Room','18','2026-02-01 13:25:00'),
-(9,19,'DELETE','Office_Room','19','2026-02-01 13:30:00'),
-(9,20,'EMERGENCY_VIEW','Member','20','2026-02-01 13:35:00');
+(9,2,'UPDATE','Member','2','2026-02-01 12:05:00');
