@@ -1,30 +1,17 @@
 CREATE DATABASE CallHub;
 USE CallHub;
 
-/*
-    Notes & suggested checks:
-    - This file intentionally does not change existing table definitions.
-    - Below are recommended CHECK constraints and comments to help validate
-        basic invariants. They are provided as commented examples so you can
-        enable them later if desired (uncomment to apply).
-*/
-
--- Table 1: Department — department metadata and HOD link
+-- Table 1: Department
 CREATE TABLE Department (
     department_id INT AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(100) UNIQUE NOT NULL,
-    department_building VARCHAR(100) NOT NULL,
+    building VARCHAR(100) NOT NULL,
     opening_hours TIME NOT NULL,
     closing_hours TIME NOT NULL,
     hod_member_id INT NULL
 );
 
--- Suggested invariant: opening_hours should be before closing_hours
--- Example (commented):
--- ALTER TABLE Department
--- ADD CONSTRAINT chk_dept_hours CHECK (opening_hours < closing_hours);
-
--- Table 2: Member — member personal and departmental info
+-- Table 2: Member
 CREATE TABLE Member (
     member_id INT AUTO_INCREMENT PRIMARY KEY,
     member_name VARCHAR(100) NOT NULL,
@@ -39,18 +26,18 @@ CREATE TABLE Member (
     FOREIGN KEY (department_id) REFERENCES Department(department_id)
 );
 
--- Suggested invariants for Member:
--- 1) Date of birth should be before join date
--- 2) If exit_date exists it should be on/after join_date
--- 3) `primary_phone` length/format could be validated with a CHECK or regex at application layer
--- Example (commented):
--- ALTER TABLE Member
--- ADD CONSTRAINT chk_member_dates CHECK (dob < join_date AND (exit_date IS NULL OR exit_date >= join_date));
+-- Add HOD FK after Member is created
 ALTER TABLE Department
 ADD CONSTRAINT fk_hod
 FOREIGN KEY (hod_member_id) REFERENCES Member(member_id);
 
--- Table 3: Member_Role — role assignments for members
+-- Table 3: Role
+CREATE TABLE Role (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Table 4: Member_Role
 CREATE TABLE Member_Role (
     member_id INT NOT NULL,
     role_id INT NOT NULL,
@@ -62,11 +49,7 @@ CREATE TABLE Member_Role (
     FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
--- Suggested invariant: start_date should be before end_date when end_date is present
--- ALTER TABLE Member_Role
--- ADD CONSTRAINT chk_memberrole_dates CHECK (end_date IS NULL OR start_date < end_date);
-
--- Table 4: Member_Contact — alternate contacts for members
+-- Table 5: Member_Contact
 CREATE TABLE Member_Contact (
     contact_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
@@ -76,18 +59,7 @@ CREATE TABLE Member_Contact (
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
 );
 
--- Suggestion: use `is_primary` to mark preferred contact; ensure at most one primary per member
--- This requires a UNIQUE index on (member_id, is_primary) with conditional expression
--- MySQL does not support partial unique indexes before v8.0.13, so enforce at application level
-
-
--- Table 5: Role — role definitions used for permissions
-CREATE TABLE Role (
-    role_id INT AUTO_INCREMENT PRIMARY KEY,
-    role_name VARCHAR(50) UNIQUE NOT NULL
-);
-
--- Table 6: Hostel — hostel records and caretakers
+-- Table 6: Hostel
 CREATE TABLE Hostel (
     hostel_id INT AUTO_INCREMENT PRIMARY KEY,
     hostel_name VARCHAR(100) UNIQUE NOT NULL,
@@ -96,37 +68,30 @@ CREATE TABLE Hostel (
     FOREIGN KEY (caretaker_member_id) REFERENCES Member(member_id)
 );
 
--- Suggestion: caretaker_contact format checks and ensuring caretaker_member_id exists handled by FK already
-
--- Table 7: Lab — lab details and in-charge member
+-- Table 7: Lab
 CREATE TABLE Lab (
     lab_id INT AUTO_INCREMENT PRIMARY KEY,
     lab_name VARCHAR(100) NOT NULL,
     department_id INT NOT NULL,
-    lab_room_no VARCHAR(20) NOT NULL,
+    building VARCHAR(100) NOT NULL,
+    room_no VARCHAR(20) NOT NULL,
     contact_no VARCHAR(20),
     incharge_member_id INT NULL,
     FOREIGN KEY (department_id) REFERENCES Department(department_id),
     FOREIGN KEY (incharge_member_id) REFERENCES Member(member_id)
 );
 
--- Suggestion: consider UNIQUE(department_id, lab_room_no) if room numbers are unique per department
-
-
-
--- Table 8: Office_Room — office locations per department
+-- Table 8: Office_Room
 CREATE TABLE Office_Room (
     office_room_id INT AUTO_INCREMENT PRIMARY KEY,
     department_id INT NOT NULL,
-    building_no VARCHAR(20) NOT NULL,
-    office_room_no VARCHAR(20) NOT NULL,
+    building VARCHAR(100) NOT NULL,
+    room_no VARCHAR(20) NOT NULL,
     office_contact VARCHAR(20),
     FOREIGN KEY (department_id) REFERENCES Department(department_id)
 );
 
--- Suggestion: consider UNIQUE(department_id, office_room_no) to avoid duplicate room entries
-
--- Table 9: Directory_Interaction_Log — logs of directory interactions
+-- Table 9: Directory_Interaction_Log
 CREATE TABLE Directory_Interaction_Log (
     interaction_id INT AUTO_INCREMENT PRIMARY KEY,
     actor_member_id INT NOT NULL,
@@ -137,16 +102,13 @@ CREATE TABLE Directory_Interaction_Log (
     FOREIGN KEY (target_member_id) REFERENCES Member(member_id)
 );
 
--- Suggestion: consider indexing `interaction_time` for query performance
-
-
--- Table 10: Permission — permission catalogue
+-- Table 10: Permission
 CREATE TABLE Permission (
     permission_id INT AUTO_INCREMENT PRIMARY KEY,
     permission_name VARCHAR(100) UNIQUE NOT NULL
 );
 
--- Table 11: Role_Permission — mapping roles to permissions
+-- Table 11: Role_Permission
 CREATE TABLE Role_Permission (
     role_id INT NOT NULL,
     permission_id INT NOT NULL,
@@ -155,25 +117,21 @@ CREATE TABLE Role_Permission (
     FOREIGN KEY (permission_id) REFERENCES Permission(permission_id)
 );
 
--- Table 12: Search_Log — records of directory searches
+-- Table 12: Search_Log
 CREATE TABLE Search_Log (
     search_id INT AUTO_INCREMENT PRIMARY KEY,
-    searched_by_member_id INT NOT NULL,
+    member_id INT NOT NULL,
     search_keyword VARCHAR(100) NOT NULL,
     search_time DATETIME NOT NULL,
     result_count INT NOT NULL,
     filter_department_id INT NULL,
     filter_role_id INT NULL,
-    FOREIGN KEY (searched_by_member_id) REFERENCES Member(member_id),
+    FOREIGN KEY (member_id) REFERENCES Member(member_id),
     FOREIGN KEY (filter_department_id) REFERENCES Department(department_id),
     FOREIGN KEY (filter_role_id) REFERENCES Role(role_id)
 );
 
--- Suggestion: `search_keyword` could be normalized/truncated for storage; consider FULLTEXT index if supported
-
-
-
--- Table 13: Login_History — login/logout records and IPs
+-- Table 13: Login_History
 CREATE TABLE Login_History (
     login_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
@@ -183,9 +141,7 @@ CREATE TABLE Login_History (
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
 );
 
--- Suggestion: consider adding an index on (member_id, login_time) for faster lookups
-
--- Table 14: Audit_Log — audit trail of data actions
+-- Table 14: Audit_Log
 CREATE TABLE Audit_Log (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
     performed_by_member_id INT NOT NULL,
@@ -200,11 +156,3 @@ CREATE TABLE Audit_Log (
     FOREIGN KEY (performed_by_member_id) REFERENCES Member(member_id),
     FOREIGN KEY (target_member_id) REFERENCES Member(member_id)
 );
-
--- Suggestion: set `retention_until` via application policy; consider a scheduled job to purge
--- Example cleanup query (run periodically):
--- DELETE FROM Audit_Log WHERE retention_until IS NOT NULL AND retention_until < CURDATE();
-
-
-
-
