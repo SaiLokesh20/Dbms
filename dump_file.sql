@@ -1,11 +1,33 @@
 CREATE DATABASE IF NOT EXISTS CallHub CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE CallHub;
 
--- -----------------------------
--- SCHEMA
--- -----------------------------
+-- =========================
+-- DROP TABLES (safe reset)
+-- =========================
+SET FOREIGN_KEY_CHECKS = 0;
 
-CREATE TABLE IF NOT EXISTS Department (
+DROP TABLE IF EXISTS Audit_Log;
+DROP TABLE IF EXISTS Login_History;
+DROP TABLE IF EXISTS Search_Log;
+DROP TABLE IF EXISTS Role_Permission;
+DROP TABLE IF EXISTS Permission;
+DROP TABLE IF EXISTS Directory_Interaction_Log;
+DROP TABLE IF EXISTS Office_Room;
+DROP TABLE IF EXISTS Lab;
+DROP TABLE IF EXISTS Hostel;
+DROP TABLE IF EXISTS Member_Contact;
+DROP TABLE IF EXISTS Member_Role;
+DROP TABLE IF EXISTS Role;
+DROP TABLE IF EXISTS Member;
+DROP TABLE IF EXISTS Department;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- =========================
+-- SCHEMA
+-- =========================
+
+CREATE TABLE Department (
     department_id INT AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(100) UNIQUE NOT NULL,
     building VARCHAR(100) NOT NULL,
@@ -14,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Department (
     hod_member_id INT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Member (
+CREATE TABLE Member (
     member_id INT AUTO_INCREMENT PRIMARY KEY,
     member_name VARCHAR(100) NOT NULL,
     iit_email VARCHAR(150) UNIQUE NOT NULL,
@@ -28,12 +50,12 @@ CREATE TABLE IF NOT EXISTS Member (
     FOREIGN KEY (department_id) REFERENCES Department(department_id)
 );
 
-CREATE TABLE IF NOT EXISTS Role (
+CREATE TABLE Role (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Member_Role (
+CREATE TABLE Member_Role (
     member_id INT NOT NULL,
     role_id INT NOT NULL,
     is_primary BOOLEAN NOT NULL,
@@ -44,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Member_Role (
     FOREIGN KEY (role_id) REFERENCES Role(role_id)
 );
 
-CREATE TABLE IF NOT EXISTS Member_Contact (
+CREATE TABLE Member_Contact (
     contact_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
     contact_type ENUM('PERSONAL_EMAIL','EMERGENCY_PHONE','ADDRESS','ALT_PHONE') NOT NULL,
@@ -53,7 +75,7 @@ CREATE TABLE IF NOT EXISTS Member_Contact (
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
 );
 
-CREATE TABLE IF NOT EXISTS Hostel (
+CREATE TABLE Hostel (
     hostel_id INT AUTO_INCREMENT PRIMARY KEY,
     hostel_name VARCHAR(100) UNIQUE NOT NULL,
     caretaker_member_id INT NULL,
@@ -61,7 +83,7 @@ CREATE TABLE IF NOT EXISTS Hostel (
     FOREIGN KEY (caretaker_member_id) REFERENCES Member(member_id)
 );
 
-CREATE TABLE IF NOT EXISTS Lab (
+CREATE TABLE Lab (
     lab_id INT AUTO_INCREMENT PRIMARY KEY,
     lab_name VARCHAR(100) NOT NULL,
     department_id INT NOT NULL,
@@ -73,7 +95,7 @@ CREATE TABLE IF NOT EXISTS Lab (
     FOREIGN KEY (incharge_member_id) REFERENCES Member(member_id)
 );
 
-CREATE TABLE IF NOT EXISTS Office_Room (
+CREATE TABLE Office_Room (
     office_room_id INT AUTO_INCREMENT PRIMARY KEY,
     department_id INT NOT NULL,
     building VARCHAR(100) NOT NULL,
@@ -82,7 +104,7 @@ CREATE TABLE IF NOT EXISTS Office_Room (
     FOREIGN KEY (department_id) REFERENCES Department(department_id)
 );
 
-CREATE TABLE IF NOT EXISTS Directory_Interaction_Log (
+CREATE TABLE Directory_Interaction_Log (
     interaction_id INT AUTO_INCREMENT PRIMARY KEY,
     actor_member_id INT NOT NULL,
     target_member_id INT NOT NULL,
@@ -92,12 +114,12 @@ CREATE TABLE IF NOT EXISTS Directory_Interaction_Log (
     FOREIGN KEY (target_member_id) REFERENCES Member(member_id)
 );
 
-CREATE TABLE IF NOT EXISTS Permission (
+CREATE TABLE Permission (
     permission_id INT AUTO_INCREMENT PRIMARY KEY,
     permission_name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Role_Permission (
+CREATE TABLE Role_Permission (
     role_id INT NOT NULL,
     permission_id INT NOT NULL,
     PRIMARY KEY (role_id, permission_id),
@@ -105,7 +127,7 @@ CREATE TABLE IF NOT EXISTS Role_Permission (
     FOREIGN KEY (permission_id) REFERENCES Permission(permission_id)
 );
 
-CREATE TABLE IF NOT EXISTS Search_Log (
+CREATE TABLE Search_Log (
     search_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
     search_keyword VARCHAR(100) NOT NULL,
@@ -118,7 +140,7 @@ CREATE TABLE IF NOT EXISTS Search_Log (
     FOREIGN KEY (filter_role_id) REFERENCES Role(role_id)
 );
 
-CREATE TABLE IF NOT EXISTS Login_History (
+CREATE TABLE Login_History (
     login_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
     login_time DATETIME NOT NULL,
@@ -127,7 +149,7 @@ CREATE TABLE IF NOT EXISTS Login_History (
     FOREIGN KEY (member_id) REFERENCES Member(member_id)
 );
 
-CREATE TABLE IF NOT EXISTS Audit_Log (
+CREATE TABLE Audit_Log (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
     performed_by_member_id INT NOT NULL,
     target_member_id INT NULL,
@@ -145,9 +167,3 @@ CREATE TABLE IF NOT EXISTS Audit_Log (
 ALTER TABLE Department
 ADD CONSTRAINT fk_hod
 FOREIGN KEY (hod_member_id) REFERENCES Member(member_id);
-
--- -----------------------------
--- SAMPLE DATA
--- -----------------------------
-
--- (Use the corrected sample_data.sql content here exactly as I gave you earlier)
